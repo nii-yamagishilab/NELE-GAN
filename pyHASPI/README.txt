@@ -1,4 +1,4 @@
-This is an unofficial Python implementation of Hearing-Aid Speech Perception Index (HASPI)
+This is an unofficial Python implementation of Hearing-Aid Speech Perception Index (HASPI) proposed by Prof. James Kates.
 
 Usage:
     from pyhaspi2 import haspi_v2
