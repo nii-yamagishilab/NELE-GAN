@@ -8,8 +8,9 @@ Implementation of paper: [Multi-Metric Optimization using Generative Adversarial
 
 ### 1. Dependencies
 
-#### Intelligibility and Quality metrics
+#### 1). Intelligibility and Quality metrics
 
-* Install SIIB measure [PySIIB](https://github.com/kamo-naoyuki/pySIIB)
+* Install SIIB metric [PySIIB](https://github.com/kamo-naoyuki/pySIIB)
+* Install STOI (ESTOI) metric [PySTOI](https://github.com/mpariente/pystoi)
+* Install PESQ metric [PyPESQ](https://github.com/vBaiCai/python-pesq)
 
-* Install STOI measure [PySTOI](https://github.com/mpariente/pystoi)
