@@ -9,8 +9,8 @@ Usage:
 
 Differences between the original Matlab implementation by Prof. James M.Kates:
     1). In our implementation, we did not apply built-in alignment, so please make sure x and y are already aligned before using this function
-    2). In our implementation of HASPI version 2, we use sigmoid weight approximation model shown in Eq.(1) in [2] instead of neural network weights
-    3). We internally normalized both x and y into rms=1, and SPL level was set to 65 dB
+    2). In our implementation of HASPI version 2, we use sigmoid weight approximation model shown in Eq.(1) in Ref.[2]instead of neural network weights
+    3). We internally normalized both x and y into rms=1, and reference SPL level was set to 65 dB
     4). We only confirmed output results are correct in the case of HL=[0,0,0,0,0,0] (as normal hearing condition). Although HL vector can be set arbitrary in the function, we cannot guarantee results are correct since lack of extensive test.
 
 Reference:
