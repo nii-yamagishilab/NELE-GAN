@@ -40,7 +40,7 @@ Note: I normalized all training utterances into RMS=0.03 for convenient processi
 
 Run: `python train_nele.py`
 
-Training configurations can be modified according to your need, `e.g. GAN_epoch, num_of_sampling, etc.`
+You should modify training configurations according to your need, `e.g. data path, GAN_epoch, num_of_sampling...`
 
 models will be saved in ***./chkpt*** 
 
