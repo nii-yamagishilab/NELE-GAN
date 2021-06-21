@@ -4,7 +4,6 @@ Implementation for paper: [Multi-Metric Optimization using Generative Adversaria
 
 [Audio samples](https://nii-yamagishilab.github.io/hyli666-demos/intelligibility)
 
----
 ## Usage steps
 
 ### 1. Dependencies
