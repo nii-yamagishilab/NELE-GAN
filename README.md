@@ -50,7 +50,6 @@ Run: `python inference.py`
 
 A pre-trained model is stored in  ***./trained_model/chkpt_GD.pt***  <br/>It was trained using 16 kHz speech materials at RMS=0.03. So please normalize your 16kHz raw speech input to RMS=0.03, if you would like to use this pre-trained model.
 
----
 
 ## Authors
 * Haoyu Li
@@ -67,8 +66,6 @@ IMCRA noise estimation algorithm was revised from [Observation Uncertainty tools
 
 
 
-
----
 ## License
 
 BSD 3-Clause License
