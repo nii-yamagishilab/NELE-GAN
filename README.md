@@ -4,6 +4,7 @@ Implementation for paper: [Multi-Metric Optimization using Generative Adversaria
 
 [Audio samples](https://nii-yamagishilab.github.io/hyli666-demos/intelligibility)
 
+---
 ## Usage steps
 
 ### 1. Dependencies
@@ -52,11 +53,11 @@ A pre-trained model is stored in  ***./trained_model/chkpt_GD.pt***  <br/>It was
 
 ---
 
-### Authors
+## Authors
 * Haoyu Li
 * [Junichi Yamagishi](https://nii-yamagishilab.github.io/)
 
-### Acknowlegment
+## Acknowlegment
 
 This work was partially supported by a JST CREST Grant (JPMJCR18A6, VoicePersonae project), Japan, and by MEXT KAKENHI Grants (16H06302, 17H04687, 18H04120, 18H04112, 18KT0051), Japan. 
 
@@ -69,7 +70,7 @@ IMCRA noise estimation algorithm was revised from [Observation Uncertainty tools
 
 
 ---
-### License
+## License
 
 BSD 3-Clause License
 
