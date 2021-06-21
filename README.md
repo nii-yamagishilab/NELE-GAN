@@ -15,7 +15,7 @@ Implementation of paper: [Multi-Metric Optimization using Generative Adversarial
 * PESQ: https://github.com/vBaiCai/python-pesq
 * ViSQOL: https://github.com/google/visqol
 * HASPI: We provide an unofficial Python-based HASPI implementation in ***pyHASPI*** folder. 
-  Note that this implementation is not exactly same with the original one. Please check pyHASPI/README.txt. For more details on HASPI, please check the following reference papers:
+  Note that this implementation is not exactly same with the original one. Please check ***pyHASPI/README.txt***.For more details on HASPI, please check the following reference papers:
 
     [1]. Kates, James M., and Kathryn H. Arehart. "The Hearing-Aid Speech Perception Index (HASPI)." Speech Communication 65 (2014): 75-93.
     
@@ -58,7 +58,7 @@ A pre-trained model is stored in  ***./trained_model/chkpt_GD.pt***  <br/>It was
 
 ### Acknowlegment
 
-This work was partially supported by a JST CREST Grant (JPMJCR18A6, VoicePersonae project), Japan, and by MEXT KAKENHI Grants (16H06302, 17H04687, 18H04120, 18H04112, 18KT0051, 19K24372), Japan. 
+This work was partially supported by a JST CREST Grant (JPMJCR18A6, VoicePersonae project), Japan, and by MEXT KAKENHI Grants (16H06302, 17H04687, 18H04120, 18H04112, 18KT0051), Japan. 
 
 
 This project was partially based on [MetricGAN](https://github.com/JasonSWFu/MetricGAN) codes.
