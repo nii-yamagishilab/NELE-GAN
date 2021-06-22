@@ -1,7 +1,7 @@
 This is an unofficial Python implementation of Hearing-Aid Speech Perception Index (HASPI) proposed by Prof. James M. Kates, and this unofficial Python implementation was redistributed with the permission of Professor James M. Kates.
 
 Usage:
-    from pyhaspi2 import haspi_v2
+    from pyhaspi2 import haspi, haspi_v2
     haspi(x,fx,y,fy, HL = np.zeros(6))
     haspi_v2(x, fx, y, fy, HL = np.zeros(6))  
 
