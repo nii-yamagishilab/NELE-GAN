@@ -40,7 +40,7 @@ fs = 16000 # sampling rate
 p_power = (1/6) # power-law compression
 inv_p = 6 # inverse of p_power
 
-weight_qua = 0.0
+weight_qua = 0.5 # weight controlling quality item, given in Eq.(7)
 
 creatdir(pt_dir)
 creatdir(output_path)
@@ -144,12 +144,12 @@ for gan_epoch in np.arange(1, GAN_epoch+1):
             noise_band = noise_band.view(1,1,noise_band.shape[1],noise_band.shape[2]).transpose(2,3).contiguous()
             ref_band = ref_band.view(1,1,ref_band.shape[1],ref_band.shape[2]).transpose(2,3).contiguous()
             d_inputs = torch.cat((enh_band,noise_band,ref_band),dim=1)
-            # d_inputs_qua = torch.cat((enh_band, ref_band),dim=1)
+            d_inputs_qua = torch.cat((enh_band, ref_band),dim=1)
 
             score = D(d_inputs)
-            # score_qua = D_Qua(d_inputs_qua)
+            score_qua = D_Qua(d_inputs_qua)
 
-            loss = MSELoss(score, target) # + weight_qua * MSELoss(score_qua, target_qua)
+            loss = MSELoss(score, target) + weight_qua * MSELoss(score_qua, target_qua)
             optimizer_g.zero_grad()
             loss.backward()
             optimizer_g.step()
