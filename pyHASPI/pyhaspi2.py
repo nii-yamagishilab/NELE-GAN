@@ -29,6 +29,50 @@ import pdb
 import time
 
 
+def hasqi_v2(x, fx, y, fy, HL=np.zeros(6)):
+    L = min(len(x), len(y))
+    x = x[:L]
+    y = y[:L]
+    rms_x = np.sqrt(np.sum(x**2) / L)
+    rms_y = np.sqrt(np.sum(y**2) / L)
+    x = x / rms_x
+    y = y / rms_y
+    Level1 = 65
+    eq = 2
+    # HASQI_v2(x,fx,y,fy,HL,eq,Level1);
+    xenv, xBM, yenv, yBM, xSL, ySL, fsamp = eb_EarModel(x,fx,y,fy,HL,eq,Level1)
+    segsize = 16
+    xdB = eb_EnvSmooth(xenv, segsize, fsamp)
+    ydB = eb_EnvSmooth(yenv, segsize, fsamp)
+
+    thr = 2.5
+    addnoise = 0.0
+    CepCorr, xy = eb_melcor(xdB, ydB, thr, addnoise)
+    dloud, dnorm, dslope = eb_SpectDiff(xSL, ySL)
+    
+    segcov = 16
+    sigcov,sigMSx,sigMSy = eb_BMcovary(xBM,yBM,segcov,fsamp)
+    thr = 2.5
+    avecov, syncov = eb_AveCovary2(sigcov, sigMSx, thr)
+    BMsync5 = syncov[4]
+
+    d = dloud[1]
+    d = d / 2.5
+    d = 1.0 - d
+    d = np.clip(d, a_min=0, a_max=1)
+    Dloud = d
+
+    d = dslope[1]
+    d = 1.0 - d
+    d = np.clip(d, a_min=0, a_max=1)
+    Dslope = d 
+
+    Nonlin = (CepCorr**2) * BMsync5
+    Linear = 0.579*Dloud + 0.421*Dslope
+    Combined = Nonlin * Linear
+    raw = [CepCorr, BMsync5, Dloud, Dslope]
+    return Combined,Nonlin,Linear,raw
+
 def haspi_v2(x, fx, y, fy, HL = np.zeros(6)):
     Level1 = 65
     L = min(len(x), len(y))
@@ -111,6 +155,100 @@ def haspi(x, fx, y, fy, HL = np.zeros(6), alpha = -1.0):
     raw = np.concatenate((np.array([CepCorr]), cov3))
 
     return Intel, raw 
+
+
+
+def eb_AveCovary2(sigcov, sigMSx, thr):
+    nchan = sigcov.shape[0]
+    cfreq = eb_CenterFreq(nchan)
+    p = np.array([1, 3, 5, 5, 5, 5])
+    fcut = 1000*np.array([1.5, 2.0, 2.5, 3.0, 3.5, 4.0])
+    fsync = np.zeros([6, nchan])
+    for n in range(6):
+        fc2p = fcut[n]**(2*p[n])
+        freq2p = cfreq ** (2*p[n])
+        fsync[n, :] = np.sqrt(fc2p/(fc2p+freq2p))
+    
+    sigRMS = np.sqrt(sigMSx)
+    sigLinear = 10**(sigRMS/20)
+    xsum = np.sum(sigLinear, 0) / nchan
+    xsum = 20*np.log10(xsum)
+    index = np.where(xsum > thr)[0]
+    nseg = len(index)
+    if nseg<=1:
+        return 0, 0
+    
+    sigcov = sigcov[:, index]
+    sigRMS = sigRMS[:, index]
+    weight = np.zeros([nchan, nseg])
+    wsync1 = np.zeros([nchan, nseg])
+    wsync2 = np.zeros([nchan, nseg])
+    wsync3 = np.zeros([nchan, nseg])
+    wsync4 = np.zeros([nchan, nseg])
+    wsync5 = np.zeros([nchan, nseg])
+    wsync6 = np.zeros([nchan, nseg])
+
+    for k in range(nchan):
+        for n in range(nseg):
+            if sigRMS[k,n] > thr:
+                weight[k,n] = 1
+                wsync1[k,n] = fsync[0, k]
+                wsync2[k,n] = fsync[1, k]
+                wsync3[k,n] = fsync[2, k]
+                wsync4[k,n] = fsync[3, k]
+                wsync5[k,n] = fsync[4, k]
+                wsync6[k,n] = fsync[5, k]
+
+    csum = np.sum(weight*sigcov)
+    wsum = np.sum(weight)
+    fsum = np.zeros(6)
+    ssum = np.zeros(6)
+    fsum[0] = np.sum(wsync1*sigcov)
+    ssum[0] = np.sum(wsync1)
+    fsum[1] = np.sum(wsync2*sigcov)
+    ssum[1] = np.sum(wsync2)
+    fsum[2] = np.sum(wsync3*sigcov)
+    ssum[2] = np.sum(wsync3)
+    fsum[3] = np.sum(wsync4*sigcov)
+    ssum[3] = np.sum(wsync4)
+    fsum[4] = np.sum(wsync5*sigcov)
+    ssum[4] = np.sum(wsync5)
+    fsum[5] = np.sum(wsync6*sigcov)
+    ssum[5] = np.sum(wsync6)
+
+    if wsum < 1:
+        return 0, fsum/ssum
+    else:
+        return csum/wsum, fsum/ssum
+
+def eb_SpectDiff(xSL, ySL):
+    nbands = len(xSL)
+    x = 10**(xSL/20)
+    y = 10**(ySL/20)
+    xsum = np.sum(x)
+    x = x / xsum
+    ysum = np.sum(y)
+    y = y / ysum
+    dloud = np.zeros(3)
+    d = x-y
+    dloud[0] = np.sum(np.abs(d))
+    dloud[1] = nbands*np.std(d)
+    dloud[2] = np.max(np.abs(d))
+
+    dnorm = np.zeros(3)
+    d = (x-y) / (x+y)
+    dnorm[0] = np.sum(np.abs(d))
+    dnorm[1] = nbands*np.std(d)
+    dnorm[2] = np.max(np.abs(d))
+
+    dslope = np.zeros(3)
+    dx = (x[1:] - x[0:-1])
+    dy = (y[1:] - y[0:-1])
+    d = dx - dy
+    dslope[0] = np.sum(np.abs(d))
+    dslope[1] = nbands*np.std(d)
+    dslope[2] = np.max(np.abs(d))
+    return dloud, dnorm, dslope
 
 
 def ebm_ModCorr(Xmod,Ymod):
@@ -1115,14 +1253,15 @@ def eb_EarModel(x,fx,y,fy,HL,itype,Level1):
 if __name__ == "__main__":
     x, fx = librosa.load('sig_clean.wav', sr=None)
     y, fy = librosa.load('sig_out.wav', sr=None)
-
+    # Combined,Nonlin,Linear,raw = hasqi_v2(x,fx,y,fy)
+    # pdb.set_trace()
     start = time.time()
     for i in range(50):
-        [score, raw] = haspi(x,fx,y,fy)
+        Combined,Nonlin,Linear,raw = hasqi_v2(x,fx,y,fy)
     end = time.time()
     print((end-start)/50)
 
-    [score, raw] = haspi_v2(x,fx,y,fy)
-    print(score)
-    print(raw)
+    # [score, raw] = haspi_v2(x,fx,y,fy)
+    # print(score)
+    # print(raw)
     # cProfile.run('haspi_v2(x,fx,y,fy)')
